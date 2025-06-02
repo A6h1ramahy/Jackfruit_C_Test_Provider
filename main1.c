@@ -9,14 +9,14 @@
 #define TOTAL_QUESTIONS 100
 #define TEST_QUESTIONS 10
 #define MAX_LENGTH 200
-#define TIME_LIMIT 15 // Time limit per question in seconds
+#define TIME_LIMIT 15
 #define MAX_CANDIDATES 1000
 
 typedef struct {
     char question[MAX_LENGTH];
     char options[4][MAX_LENGTH];
     char correct_answer;
-    int asked; // To track if question has been asked before
+    int asked; 
 } Question;
 
 typedef struct {
@@ -39,6 +39,8 @@ void shuffleQuestions(Question questions[], int count);
 void initializeQuestions(Question questions[], int count);
 
 int main() {
+    srand(time(NULL));
+    
     Question questions[TOTAL_QUESTIONS];
     int questionCount = 0;
     Candidate current;
@@ -60,7 +62,7 @@ int main() {
         
         choice = _getch();
         printf("%c\n", choice);
-
+        
         switch (choice) {
             case '1': {
                 system("cls");
@@ -71,7 +73,7 @@ int main() {
                 printf("Enter your roll number: ");
                 fgets(current.rollno, MAX_LENGTH, stdin);
                 current.rollno[strcspn(current.rollno, "\n")] = '\0';
-
+                
                 if (!isEligible(current.rollno)) {
                     printf("\nYou have already attempted the test.\n");
                     printf("Press any key to continue...");
@@ -82,7 +84,6 @@ int main() {
                 current.score = 0;
                 current.timestamp = time(NULL);
 
-                // Shuffle questions to avoid repetition
                 shuffleQuestions(questions, questionCount);
 
                 time_t test_start = time(NULL);
@@ -97,19 +98,20 @@ int main() {
                 break;
             }
             case '2':
-                system("cls");
+            system("cls");
                 showLeaderboard();
                 printf("\nPress any key to continue...");
                 _getch();
                 break;
             case '3':
-                return 0;
+            return 0;
             default:
                 printf("Invalid choice! Try again.\n");
                 printf("Press any key to continue...");
                 _getch();
         }
     }
+
 
     return 0;
 }
@@ -163,7 +165,7 @@ void loadQuestions(Question questions[], int *count) {
 bool isEligible(const char *rollno) {
     FILE *file = fopen("attempts.txt", "r");
     if (file == NULL) {
-        return true; // File doesn't exist, so candidate is eligible
+        return true; 
     }
 
     char line[MAX_LENGTH * 3];
@@ -248,12 +250,12 @@ void showLeaderboard() {
     printf("====================\n");
     printf("   LEADERBOARD\n");
     printf("====================\n");
-    printf("Rank  Name                Roll No    Score  Time\n");
-    printf("------------------------------------------------\n");
+    printf("Rank  Name               Roll No          Score    Time\n");
+    printf("---------------------------------------------------------\n");
 
     int displayCount = count > 10 ? 10 : count;
     for (int i = 0; i < displayCount; i++) {
-        printf("%-4d  %-18s %-10s %-5d  %d sec\n", 
+        printf("%-4d  %-18s %-18s %-5d  %d sec\n", 
                i + 1, 
                candidates[i].name, 
                candidates[i].rollno,
@@ -290,7 +292,7 @@ void displayCurrentCandidateRank(Candidate current) {
 
     for (int i = 0; i < count; i++) {
         if (strcmp(candidates[i].rollno, current.rollno) == 0) {
-            printf("\nYour rank: %d out of %d\n", i + 1, count);
+            printf("\nYour rank: %d out of %d\n", i + 1, count-1);
             break;
         }
     }
@@ -341,7 +343,8 @@ void conductTest(Question questions[], int count, Candidate *current) {
 
                 if (answer >= 'A' && answer <= 'D') {
                     printf("\nYou selected: %c\n", answer);
-                } else {
+                }
+                else {
                     printf("\nInvalid input! Press A, B, C, or D.\n");
                     answer = '\0';
                 }
